@@ -14,13 +14,33 @@ const Banner = () => {
     const [startDate, setStartDate] = useState();
     const [expireDate, setExpireDate] = useState();
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault()
         const form = e.target;
-        const image = { imagebb };
+        const image = imagebb;
         const title = form.title.value;
+        const sdate = startDate.toLocaleDateString("en-GB");
+        const edate = expireDate.toLocaleDateString("en-GB");
 
-        console.log(image, title)
+        console.log(image, title, sdate, edate)
+
+        const data = { image, title, startDate: sdate, expireDate: edate };
+
+        try {
+            const res = await fetch("/api/bannerDB", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data),
+            });
+
+            const result = await res.json();
+            console.log(result);
+            alert("Banner saved successfully!");
+        } catch (err) {
+            console.error("Error saving banner:", err);
+        }
+
+
 
 
     }
@@ -38,8 +58,8 @@ const Banner = () => {
             const width = img.width;
             const height = img.height;
 
-            const fixedWidth = 1920;
-            const fixedHeight = 1080;
+            const fixedWidth = 1080;
+            const fixedHeight = 360;
 
             if (width === fixedWidth && height === fixedHeight) {
                 setImage(URL.createObjectURL(file));
@@ -87,6 +107,7 @@ const Banner = () => {
                         onChange={handleImgUpload}
                         type="file"
                         accept='image/*'
+                        required
                         className="file-input file-input-info w-full"
                     />
                     <input type="url" required value={imagebb} name="imageLink" readOnly placeholder='Auto Image Link' className='input w-full input-info outline-0' />
@@ -96,8 +117,9 @@ const Banner = () => {
                     <DatePicker
                         onChange={(date) => setStartDate(date)}
                         selected={startDate}
-                        dateFormat="dd-MM-yyyy"
-                        minDate={startDate}
+                        dateFormat="dd-MM-YYYY"
+                        minDate={new Date()}
+                        required
                         className='input input-info w-full outline-0'
                         placeholderText='Start Date ( Optional )'
                     />
@@ -107,6 +129,7 @@ const Banner = () => {
                         selected={expireDate}
                         dateFormat="dd-MM-yyyy"
                         minDate={startDate}
+                        required
                         className='input input-info w-full outline-0'
                         placeholderText='Expire Date ( Optional )'
                     />
@@ -121,11 +144,11 @@ const Banner = () => {
                             <Image
                                 src={image}
                                 alt="Banner Image Privew"
-                                width={1920}
-                                height={1080}
+                                width={1080}
+                                height={360}
                                 sizes="100vw"
                                 unoptimized
-                                style={{ width: "100%", aspectRatio: "16 / 9" }}
+                                style={{ width: "100%", aspectRatio: "3 / 1" }}
                             />
                         </div>
                     )
