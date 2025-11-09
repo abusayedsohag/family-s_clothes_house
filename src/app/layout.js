@@ -1,7 +1,7 @@
 
 import Navbar from "@/Component/Navbar";
 import "./globals.css";
-
+import Script from "next/script";
 
 
 export const metadata = {
@@ -13,7 +13,11 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" data-theme="light">
       <head>
-        <script src="https://kit.fontawesome.com/0b7094b591.js" crossorigin="anonymous"></script>
+        <Script
+          src="https://kit.fontawesome.com/0b7094b591.js"
+          crossOrigin="anonymous"
+          strategy="afterInteractive"
+        />
       </head>
       <body>
         <Navbar />
