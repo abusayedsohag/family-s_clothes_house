@@ -2,13 +2,12 @@ import AdminNav from '@/Component/Admin/Navbar';
 import Sidebar from '@/Component/Admin/Sidebar';
 import React from 'react';
 
-const Adminlayout = ({children}) => {
+const Adminlayout = ({ children }) => {
     return (
         <div className=''>
             <AdminNav />
             <div className='flex'>
-                <Sidebar />
-                {children}
+                <Sidebar children={children} />
             </div>
         </div>
     );
