@@ -1,3 +1,4 @@
+
 import Image from 'next/image';
 import React from 'react';
 
@@ -24,9 +25,10 @@ const AdminNav = () => {
                 <div className="navbar-center">
                     <Image
                         src="/logo.png"
-                        alt='Family Group Logo'
-                        width={38}
-                        height={38}
+                        alt="Family's Group Logo"
+                        width={1072}
+                        height={1012}
+                        style={{ width: '38px', height: '38px' }}
                     />
                     <a className="btn btn-ghost hidden md:flex text-xl">Family's Clothes House</a>
                 </div>

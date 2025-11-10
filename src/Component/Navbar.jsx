@@ -1,10 +1,10 @@
 "use client";
 
-import Swal from 'sweetalert2';
+// import Swal from 'sweetalert2';
 import Link from 'next/link';
 import Image from 'next/image';
 // import { useAuth } from '@/context/AuthContext';
-import { useEffect, useRef, useState } from 'react';
+// import { useEffect, useRef, useState } from 'react';
 
 const Navbar = () => {
 
@@ -78,7 +78,9 @@ const Navbar = () => {
                     <Image
                         src="/logo.png"
                         alt="Family's Group Logo"
-                        width={38} height={38}
+                        width={1072}
+                        height={1012}
+                        style={{ width: '38px', height: 'auto' }}
                     />
                     <a className="btn hidden  md:flex btn-ghost text-xl">Family's Clothes House</a>
                 </div>
