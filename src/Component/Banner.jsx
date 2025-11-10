@@ -11,9 +11,6 @@ const Banner = () => {
         fetch('/api/bannerDB')
             .then(res => res.json())
             .then(data => {
-
-                
-
                 setBannerInfo(data.banners);
             })
     }, [])

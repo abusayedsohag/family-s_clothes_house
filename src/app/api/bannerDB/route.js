@@ -1,6 +1,7 @@
 export const runtime = "nodejs";
 
 import clientPromise from "@/lib/mongoDB";
+import { ObjectId } from "mongodb";
 import { NextResponse } from "next/server";
 
 export async function POST(req) {
@@ -10,8 +11,20 @@ export async function POST(req) {
         const collection = db.collection("banner_info");
 
         const body = await req.json();
-        const result = await collection.insertOne(body);
 
+        const existing = await collection.findOne({
+            image: body.image,
+        });
+
+
+        if (existing) {
+            return NextResponse.json({
+                success: false,
+                message: "Duplicate banner found!",
+            });
+        }
+
+        const result = await collection.insertOne(body);
 
         return NextResponse.json({
             success: true,
@@ -19,7 +32,6 @@ export async function POST(req) {
         });
 
     } catch (err) {
-        console.error(err);
         return NextResponse.json({ error: err.message }, { status: 500 });
     }
 }
@@ -54,7 +66,33 @@ export async function GET() {
 
         });
 
-        return NextResponse.json({ success: true, banners: availableBanners });
+        return NextResponse.json({ success: true, bannersall: data, banners: availableBanners });
+    } catch (error) {
+        return NextResponse.json({ success: false, message: error.message }, { status: 500 });
+    }
+}
+
+
+export async function DELETE(req) {
+    try {
+        const client = await clientPromise;
+        const db = client.db("familys_clothes_house");
+        const collection = db.collection("banner_info");
+
+        const { searchParams } = new URL(req.url);
+        const id = searchParams.get("id");
+
+        if (!id) {
+            return NextResponse.json({ success: false, message: "Missing banner ID" }, { status: 400 });
+        }
+
+        const result = await collection.deleteOne({ _id: new ObjectId(id) })
+
+        if (result.deletedCount === 0) {
+            return NextResponse.json({ success: false, message: "Banner not found" }, { status: 404 });
+        }
+
+        return NextResponse.json({ success: true, message: "Banner deleted successfully" });
     } catch (error) {
         return NextResponse.json({ success: false, message: error.message }, { status: 500 });
     }
