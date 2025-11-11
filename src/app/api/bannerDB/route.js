@@ -44,26 +44,36 @@ export async function GET() {
 
         const data = await collection.find({}).toArray();
 
-        const availableBanners = data.filter(banner => {
-            const [sDay, sMonth, sYear] = banner.startDate.split("/").map(Number);
-            const [eDay, eMonth, eYear] = banner.expireDate.split("/").map(Number);
+        const todayUTC = new Date();
+        todayUTC.setHours(todayUTC.getHours() + 6);
 
-            const todayUTC = new Date();
-            todayUTC.setHours(todayUTC.getHours() + 6);
+        const dateOnly = new Date(Date.UTC(
+            todayUTC.getUTCFullYear(),
+            todayUTC.getUTCMonth(),
+            todayUTC.getUTCDate()
+        ));
 
-            const dateOnly = new Date(Date.UTC(
-                todayUTC.getUTCFullYear(),
-                todayUTC.getUTCMonth(),
-                todayUTC.getUTCDate()
-            ));
+        const availableBanners = data.filter((banner) => {
+            const hasStart = banner.startDate;
+            const hasExpire = banner.expireDate;
 
-            const startDateUTC = new Date(Date.UTC(sYear, sMonth - 1, sDay));
-            const expireDateUTC = new Date(Date.UTC(eYear, eMonth - 1, eDay));
+            if (!hasStart && !hasExpire) return true;
 
-            console.log(startDateUTC, expireDateUTC, dateOnly)
+            const [sDay, sMonth, sYear] = banner.startDate?.split("/").map(Number) || [];
+            const [eDay, eMonth, eYear] = banner.expireDate?.split("/").map(Number) || [];
 
-            return dateOnly >= startDateUTC && dateOnly <= expireDateUTC;
+            const startDateUTC = hasStart ? new Date(Date.UTC(sYear, sMonth - 1, sDay)) : null;
+            const expireDateUTC = hasExpire ? new Date(Date.UTC(eYear, eMonth - 1, eDay)) : null;
 
+            if (hasStart && !hasExpire) {
+                return dateOnly >= startDateUTC;
+            }
+
+            if (hasStart && hasExpire) {
+                return dateOnly >= startDateUTC && dateOnly <= expireDateUTC;
+            }
+
+            return false;
         });
 
         return NextResponse.json({ success: true, bannersall: data, banners: availableBanners });
@@ -93,6 +103,38 @@ export async function DELETE(req) {
         }
 
         return NextResponse.json({ success: true, message: "Banner deleted successfully" });
+    } catch (error) {
+        return NextResponse.json({ success: false, message: error.message }, { status: 500 });
+    }
+}
+
+export async function PUT(req) {
+    try {
+        const client = await clientPromise;
+        const db = client.db("familys_clothes_house");
+        const collection = db.collection("banner_info");
+
+        const { searchParams } = new URL(req.url);
+        const id = searchParams.get("id");
+
+        if (!id) {
+            return NextResponse.json({ success: false, message: "Missing banner ID" }, { status: 400 });
+        }
+
+        const body = await req.json();
+
+
+        const result = await collection.updateOne({ _id: new ObjectId(id) }, {
+            $set: {
+                ...body
+            }
+        })
+
+        if (result.modifiedCount === 0) {
+            return NextResponse.json({ success: false, message: "Banner not found" }, { status: 404 });
+        }
+
+        return NextResponse.json({ success: true, message: "Banner Update successfully" });
     } catch (error) {
         return NextResponse.json({ success: false, message: error.message }, { status: 500 });
     }

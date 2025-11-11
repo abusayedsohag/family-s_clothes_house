@@ -26,10 +26,10 @@ const AdminNav = () => {
                     <Image
                         src="/logo.png"
                         alt="Family's Group Logo"
-                        width={1072}
-                        height={1012}
-                        style={{ width: '38px', height: '38px' }}
+                        width={38}
+                        height={38 * (1012 / 1072)}
                     />
+
                     <a className="btn btn-ghost hidden md:flex text-xl">Family's Clothes House</a>
                 </div>
                 <div className="navbar-end">

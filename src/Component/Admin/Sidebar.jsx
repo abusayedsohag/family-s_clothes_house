@@ -6,7 +6,7 @@ const Sidebar = ({ children }) => {
         <div className="drawer drawer-open">
             <input id="my-drawer-4" type="checkbox" className="drawer-toggle" />
             <div className="drawer-content w-full min-h-11/12 ">
-                <div className='ml-2 mt-2 p-2 border-sky-300 border-t border-l rounded-tl-sm md:rounded-tl-lg bg-base-200 h-full '>
+                <div className='md:ml-2 md:mt-2 p-2 border-sky-300 border-t border-l rounded-tl-sm md:rounded-tl-lg bg-base-200 h-full '>
                     {children}
                 </div>
             </div>
@@ -14,9 +14,7 @@ const Sidebar = ({ children }) => {
             <div className="drawer-side is-drawer-close:overflow-visible">
                 <label htmlFor="my-drawer-4" aria-label="close sidebar" className="drawer-overlay"></label>
                 <div className="is-drawer-close:w-14 is-drawer-open:w-full bg-base-200 flex flex-col items-start min-h-11/12">
-                    {/* Sidebar content here */}
                     <div className="menu w-full grow">
-
                         <ul>
                             <li>
                                 <div data-tip="Homepage" className='border-b'>
