@@ -1,6 +1,7 @@
 "use client"
 import Spinner from '@/Component/Admin/Spinner';
 import React, { useState } from 'react';
+import Swal from 'sweetalert2';
 
 const AddPro = () => {
 
@@ -97,7 +98,7 @@ const AddPro = () => {
     };
 
 
-    const handleSUbmit = (e) => {
+    const handleSUbmit = async (e) => {
         e.preventDefault()
         const form = e.target;
 
@@ -126,6 +127,36 @@ const AddPro = () => {
         const pData = { pImage, pName, pCode, pCategory, pBrand, pDes, pShortDes, pKey, rPrice, discount, salePrice, pStock, pstatus, sizes }
 
         console.log(pData)
+
+        try {
+            const respon = await fetch('/api/products',
+                {
+                    method: "POST",
+                    headers: { "content-type": "application/json" },
+                    body: JSON.stringify(pData),
+
+                })
+
+            const rdata = await respon.json()
+
+            if (rdata.success) {
+                Swal.fire({
+                    title: "Successfully!",
+                    icon: "success",
+                    draggable: true
+                });
+
+                form.reset();
+            } else {
+                Swal.fire({
+                    icon: "error",
+                    title: "Oops...",
+                    text: rdata.message,
+                });
+            }
+        } catch {
+
+        }
     }
 
 
