@@ -13,15 +13,35 @@ export async function POST(req) {
 
         const body = await req.json();
 
-        const dub = await collection.findOne({
-            pImage: { $in: body.pImage }
-        });
+        const cleanImages = (body.pImage || []).filter(img => img && img.trim() !== "");
 
-        if (dub) {
+        let imgDub = null;
+        if (cleanImages.length > 0) {
+            imgDub = await collection.findOne({
+                pImage: { $in: cleanImages }
+            });
+        }
+
+        console.log(imgDub, body.pImage)
+
+        if (imgDub) {
             return NextResponse.json({
                 success: false,
-                message: "The Products Already Existed"
-            })
+                type: "image",
+                message: "Image already exists"
+            });
+        }
+
+        const codeDub = await collection.findOne({
+            pCode: body.pCode
+        });
+
+        if (codeDub) {
+            return NextResponse.json({
+                success: false,
+                type: "code",
+                message: "Product code already exists"
+            });
         }
 
         const result = await collection.insertOne(body);

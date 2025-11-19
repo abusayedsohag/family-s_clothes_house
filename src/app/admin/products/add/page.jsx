@@ -6,7 +6,7 @@ import Swal from 'sweetalert2';
 const AddPro = () => {
 
 
-    const [images, setImages] = useState(Array(6).fill(null));
+    const [images, setImages] = useState(Array(6).fill(""));
     const [loading, setLoading] = useState(null)
 
     const [regular, setRegular] = useState("")
