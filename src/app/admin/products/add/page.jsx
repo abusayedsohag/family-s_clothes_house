@@ -9,6 +9,8 @@ const AddPro = () => {
     const [images, setImages] = useState(Array(6).fill(""));
     const [loading, setLoading] = useState(null)
 
+    console.log(images)
+
     const [regular, setRegular] = useState("")
     const [discount, setDiscount] = useState("")
 
@@ -98,6 +100,14 @@ const AddPro = () => {
     };
 
 
+    const handleDeleteImage = (index) => {
+        const updated = [...images];
+        updated[index] = "";
+        setImages(updated);
+    };
+
+
+
     const handleSUbmit = async (e) => {
         e.preventDefault()
         const form = e.target;
@@ -147,6 +157,10 @@ const AddPro = () => {
                 });
 
                 form.reset();
+                setImages(Array(6).fill(""));
+                setDiscount("")
+                setRegular("")
+                setSelectedSizes([])
             } else {
                 Swal.fire({
                     icon: "error",
@@ -169,7 +183,7 @@ const AddPro = () => {
             <form onSubmit={handleSUbmit} className='grid grid-cols-1 lg:grid-cols-3 gap-5 py-5'>
 
                 <div className='grid grid-cols-3 gap-0.5 md:gap-2 grid-rows-3'>
-                    {
+                    {/* {
                         images.map((img, index) => (
                             <label
                                 key={index}
@@ -187,14 +201,85 @@ const AddPro = () => {
                                 {loading === index ? (
                                     <Spinner></Spinner>
                                 ) : img ? (
-                                    <img src={img} alt="preview" className="object-cover w-full h-full rounded" />
+                                    <div className="w-full aspect-square relative">
+                                        <img src={img} className="object-cover w-full h-full rounded" alt="preview" />
+                                        <div className='absolute z-10 bottom-0 right-0'>
+                                            <button
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    handleDeleteImage(index);
+                                                }}
+                                                type='button'
+                                                className='btn btn-primary'>
+                                                Delete
+                                            </button>
+                                        </div>
+                                    </div>
                                 ) : (
                                     <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 4v16m8-8H4" />
                                     </svg>
                                 )}
                             </label>))
-                    }
+                    } */}
+
+                    {images.map((img, index) => (
+                        <div key={index} className={`cursor-pointer relative group flex items-center justify-center border aspect-square rounded border-neutral-300 bg-base-300 ${index === 0 ? "col-span-2 row-span-2" : ""
+                            }`} >
+                            {img ? (
+                                <>
+                                    <img
+                                        src={img}
+                                        alt={`img-${index}`}
+                                        className="w-full h-full object-cover"
+                                    />
+                                    {/* Hover delete */}
+                                    <div className="absolute bottom-0 right-0 md:opacity-0
+                                    md:translate-x-10 group-hover:opacity-100 group-hover:translate-0 transition-all ease-in-out duration-500 bg-white flex py-1 gap-5 px-2 rounded-l-2xl">
+
+                                        <label
+                                        >
+                                            <input
+                                                type="file"
+                                                accept="image/*"
+                                                name={`image${index}`}
+                                                className="sr-only"
+                                                required={index === 0}
+                                                onChange={(e) => handleImgUpload(index, e)}
+                                            />
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="feather feather-edit"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" /><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" /></svg>
+                                        </label>
+                                        <button
+                                            type="button"
+
+                                            onClick={() => handleDeleteImage(index)}
+                                        >
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="feather feather-trash-2"><polyline points="3 6 5 6 21 6" /><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" /><line x1="10" y1="11" x2="10" y2="17" /><line x1="14" y1="11" x2="14" y2="17" /></svg>
+                                        </button>
+
+                                    </div>
+                                </>
+                            ) : (
+                                loading === index ? (
+                                    <Spinner></Spinner>
+                                ) : (
+                                    <label className="w-full h-full flex items-center justify-center cursor-pointer">
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 4v16m8-8H4" />
+                                        </svg>
+                                        <input
+                                            type="file"
+                                            accept="image/*"
+                                            name={`image${index}`}
+                                            className="sr-only"
+                                            required={index === 0}
+                                            onChange={(e) => handleImgUpload(index, e)}
+                                        />
+                                    </label>
+                                )
+                            )}
+                        </div>
+                    ))}
                 </div>
 
                 <div className='lg:col-span-2 gap-5 grid lg:grid-cols-2'>
