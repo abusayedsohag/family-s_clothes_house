@@ -1,6 +1,7 @@
 "use client"
+import AddCategory from '@/Component/Admin/AddCategory';
 import Spinner from '@/Component/Admin/Spinner';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Swal from 'sweetalert2';
 
 const AddPro = () => {
@@ -9,12 +10,121 @@ const AddPro = () => {
     const [images, setImages] = useState(Array(6).fill(""));
     const [loading, setLoading] = useState(null)
 
-    console.log(images)
+    const [reload, getReload] = useState(1)
 
     const [regular, setRegular] = useState("")
     const [discount, setDiscount] = useState("")
 
+    const [category, setCategory] = useState([]);
+    const [brand, setBrand] = useState([]);
+
     const [selectedSizes, setSelectedSizes] = useState([]);
+
+    // Category Modal
+    const [cateOpen, setCateOpen] = useState(false);
+    const [brandOpen, setBrandOpen] = useState(false);
+
+
+    useEffect(() => {
+        fetch("/api/category")
+            .then(res => res.json())
+            .then(data => setCategory(data.category))
+    }, [reload])
+
+    useEffect(() => {
+        fetch("/api/brand")
+            .then(res => res.json())
+            .then(data => setBrand(data.brand))
+    }, [reload])
+
+    // Brand Add Form
+    const handleAddBrand = async (e) => {
+        e.preventDefault()
+
+        const form = e.target;
+        const newBrand = form.newBrand.value;
+
+        try {
+            const respon = await fetch('/api/brand',
+                {
+                    method: "POST",
+                    headers: { "content-type": "application/json" },
+                    body: JSON.stringify({ newBrand }),
+
+                })
+
+            const data = await respon.json()
+
+            if (data.success) {
+                Swal.fire({
+                    title: "Successfully!",
+                    icon: "success",
+                    draggable: true
+                });
+
+                setBrandOpen(false)
+                getReload(reload + 1)
+            } else {
+                Swal.fire({
+                    icon: "error",
+                    title: "Oops...",
+                    text: data.message,
+                });
+            }
+        } catch (error) {
+            Swal.fire({
+                icon: "error",
+                title: "Oops...",
+                text: error.message,
+            });
+        }
+    }
+
+    // Category Add Form
+    const handleAddCate = async (e) => {
+        e.preventDefault()
+
+        const form = e.target;
+        const newCate = form.newCate.value;
+
+        try {
+            const respon = await fetch('/api/category',
+                {
+                    method: "POST",
+                    headers: { "content-type": "application/json" },
+                    body: JSON.stringify({ newCate }),
+
+                })
+
+            const data = await respon.json()
+
+            if (data.success) {
+                Swal.fire({
+                    title: "Successfully!",
+                    icon: "success",
+                    draggable: true
+                });
+
+                setCateOpen(false)
+                getReload(reload + 1)
+            } else {
+                Swal.fire({
+                    icon: "error",
+                    title: "Oops...",
+                    text: data.message,
+                });
+            }
+        } catch (error) {
+            Swal.fire({
+                icon: "error",
+                title: "Oops...",
+                text: error.message,
+            });
+        }
+
+
+
+    }
 
     const handleImgUpload = async (index, e) => {
         const file = e.target.files[0];
@@ -168,8 +278,12 @@ const AddPro = () => {
                     text: rdata.message,
                 });
             }
-        } catch {
-
+        } catch (error) {
+            Swal.fire({
+                icon: "error",
+                title: "Oops...",
+                text: error.message,
+            });
         }
     }
 
@@ -183,46 +297,6 @@ const AddPro = () => {
             <form onSubmit={handleSUbmit} className='grid grid-cols-1 lg:grid-cols-3 gap-5 py-5'>
 
                 <div className='grid grid-cols-3 gap-0.5 md:gap-2 grid-rows-3'>
-                    {/* {
-                        images.map((img, index) => (
-                            <label
-                                key={index}
-                                className={`cursor-pointer flex items-center justify-center border aspect-square rounded border-neutral-300 bg-base-300 ${index === 0 ? "col-span-2 row-span-2" : ""
-                                    }`}
-                            >
-                                <input
-                                    type="file"
-                                    accept="image/*"
-                                    name={`image${index}`}
-                                    className="sr-only"
-                                    required={index === 0}
-                                    onChange={(e) => handleImgUpload(index, e)}
-                                />
-                                {loading === index ? (
-                                    <Spinner></Spinner>
-                                ) : img ? (
-                                    <div className="w-full aspect-square relative">
-                                        <img src={img} className="object-cover w-full h-full rounded" alt="preview" />
-                                        <div className='absolute z-10 bottom-0 right-0'>
-                                            <button
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    handleDeleteImage(index);
-                                                }}
-                                                type='button'
-                                                className='btn btn-primary'>
-                                                Delete
-                                            </button>
-                                        </div>
-                                    </div>
-                                ) : (
-                                    <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 4v16m8-8H4" />
-                                    </svg>
-                                )}
-                            </label>))
-                    } */}
-
                     {images.map((img, index) => (
                         <div key={index} className={`cursor-pointer relative group flex items-center justify-center border aspect-square rounded border-neutral-300 bg-base-300 ${index === 0 ? "col-span-2 row-span-2" : ""
                             }`} >
@@ -335,34 +409,48 @@ const AddPro = () => {
                         />
                     </label>
 
-                    <label className="select w-full select-warning">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" id="Auto-Correction-Check--Streamline-Flex-Gradient" height="24" width="24">
-                            <path fill="#000000" d="m7.225 9.70005 4.175 -6.675c0.08335 -0.11667 0.175 -0.20417 0.275 -0.2625 0.1 -0.058335 0.21665 -0.0875 0.35 -0.0875 0.13335 0 0.25 0.029165 0.35 0.0875 0.1 0.05833 0.19165 0.14583 0.275 0.2625l4.175 6.675c0.08335 0.13335 0.12085 0.26665 0.1125 0.4 -0.00835 0.13335 -0.04585 0.25835 -0.1125 0.375 -0.06665 0.11665 -0.155 0.20835 -0.265 0.275 -0.11 0.06665 -0.23835 0.1 -0.385 0.1h-8.3c-0.1485 0 -0.2785 -0.0344 -0.39 -0.10325 -0.1115 -0.06865 -0.19815 -0.15925 -0.26 -0.27175 -0.06665 -0.11665 -0.10415 -0.24165 -0.1125 -0.375 -0.00835 -0.13335 0.02915 -0.26665 0.1125 -0.4Zm10.425 12.3c-1.20835 0 -2.2354 -0.4229 -3.08125 -1.26875S13.3 18.8584 13.3 17.65005c0 -1.20835 0.4229 -2.2354 1.26875 -3.08125s1.8729 -1.26875 3.08125 -1.26875c1.20835 0 2.2354 0.4229 3.08125 1.26875S22 16.4417 22 17.65005c0 1.20835 -0.4229 2.2354 -1.26875 3.08125s-1.8729 1.26875 -3.08125 1.26875ZM3 20.62505v-6.1c0 -0.2125 0.071915 -0.39065 0.21575 -0.5345 0.143665 -0.14365 0.32175 -0.2155 0.53425 -0.2155h6.1c0.2125 0 0.39065 0.07185 0.5345 0.2155 0.14365 0.14385 0.2155 0.322 0.2155 0.5345v6.1c0 0.2125 -0.07185 0.3906 -0.2155 0.53425 -0.14385 0.14385 -0.322 0.21575 -0.5345 0.21575H3.75c-0.2125 0 -0.390585 -0.0719 -0.53425 -0.21575C3.071915 21.01565 3 20.83755 3 20.62505Z" strokeWidth="0.5" />
-                        </svg>
+                    <div className='flex items-center gap-2'>
+                        <label className="select w-full select-warning">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" id="Auto-Correction-Check--Streamline-Flex-Gradient" height="24" width="24">
+                                <path fill="#000000" d="m7.225 9.70005 4.175 -6.675c0.08335 -0.11667 0.175 -0.20417 0.275 -0.2625 0.1 -0.058335 0.21665 -0.0875 0.35 -0.0875 0.13335 0 0.25 0.029165 0.35 0.0875 0.1 0.05833 0.19165 0.14583 0.275 0.2625l4.175 6.675c0.08335 0.13335 0.12085 0.26665 0.1125 0.4 -0.00835 0.13335 -0.04585 0.25835 -0.1125 0.375 -0.06665 0.11665 -0.155 0.20835 -0.265 0.275 -0.11 0.06665 -0.23835 0.1 -0.385 0.1h-8.3c-0.1485 0 -0.2785 -0.0344 -0.39 -0.10325 -0.1115 -0.06865 -0.19815 -0.15925 -0.26 -0.27175 -0.06665 -0.11665 -0.10415 -0.24165 -0.1125 -0.375 -0.00835 -0.13335 0.02915 -0.26665 0.1125 -0.4Zm10.425 12.3c-1.20835 0 -2.2354 -0.4229 -3.08125 -1.26875S13.3 18.8584 13.3 17.65005c0 -1.20835 0.4229 -2.2354 1.26875 -3.08125s1.8729 -1.26875 3.08125 -1.26875c1.20835 0 2.2354 0.4229 3.08125 1.26875S22 16.4417 22 17.65005c0 1.20835 -0.4229 2.2354 -1.26875 3.08125s-1.8729 1.26875 -3.08125 1.26875ZM3 20.62505v-6.1c0 -0.2125 0.071915 -0.39065 0.21575 -0.5345 0.143665 -0.14365 0.32175 -0.2155 0.53425 -0.2155h6.1c0.2125 0 0.39065 0.07185 0.5345 0.2155 0.14365 0.14385 0.2155 0.322 0.2155 0.5345v6.1c0 0.2125 -0.07185 0.3906 -0.2155 0.53425 -0.14385 0.14385 -0.322 0.21575 -0.5345 0.21575H3.75c-0.2125 0 -0.390585 -0.0719 -0.53425 -0.21575C3.071915 21.01565 3 20.83755 3 20.62505Z" strokeWidth="0.5" />
+                            </svg>
 
-                        <select name='pCategory' className='p-0 ml-0' defaultValue="" required>
-                            <option disabled value="">Select Category</option>
-                            <option>Two Pices</option>
-                            <option>Three Pices</option>
-                            <option>Kurta</option>
-                        </select>
-                    </label>
+                            <select name='pCategory' className='p-0 ml-0' defaultValue="" required>
+                                <option disabled value="">Select Category</option>
+                                {
+                                    category?.map((data, inD) => (
+                                        <option key={inD}>{data.newCate}</option>
+                                    ))
+                                }
+                            </select>
+                        </label>
+                        <button onClick={() => setCateOpen(true)} type='button' className='btn btn-warning'>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="feather feather-plus-circle"><circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="16" /><line x1="8" y1="12" x2="16" y2="12" /></svg>
+                        </button>
+                    </div>
 
-                    <label className="input w-full validator">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 14" id="Auto-Correction-Check--Streamline-Flex-Gradient" height="24" width="24">
+                    <div className='flex items-center gap-2'>
+                        <label className="select w-full select-warning">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 14" id="Auto-Correction-Check--Streamline-Flex-Gradient" height="24" width="24">
                             <g id="bookmark--bookmarks-tags-favorite">
                                 <path id="Vector" fill="#d7e0ff" d="M16.24085357142857 16.832957142857143c-0.04624285714285714 0.6485142857142857 -0.8254071428571429 0.9516 -1.2977249999999998 0.50505L10.706878928571427 13.333180714285714c-0.5369324999999999 -0.5076128571428571 -1.3767975 -0.5076128571428571 -1.91373 -0.00001392857142857143L4.556968928571428 17.338007142857144c-0.47241535714285715 0.44654999999999995 -1.2515239285714286 0.1434642857142857 -1.2978364285714286 -0.50505 -0.31472999999999995 -4.406136428571428 -0.32800392857142857 -8.824850357142857 -0.06656464285714285 -13.231641428571427C3.2783817857142856 2.1550425 4.4894292857142855 1.0446428571428572 5.9382375 1.0446428571428572h7.623552857142857c1.4487524999999999 0 2.6598417857142853 1.1103996428571428 2.7456417857142856 2.556672857142857 0.2614392857142857 4.406791071428572 0.24820714285714285 8.825505 -0.06657857142857143 13.231641428571427Z" strokeWidth="1.5" />
                                 <path id="Vector_2" stroke="#4147d5" strokeLinecap="round" strokeLinejoin="round" d="M16.240992857142857 16.832957142857143c-0.04638214285714286 0.6485142857142857 -0.8254071428571429 0.9516 -1.2978642857142857 0.50505L10.706920714285715 13.333180714285714c-0.5369324999999999 -0.5076128571428571 -1.3767975 -0.5076128571428571 -1.91373 -0.00001392857142857143L4.557010714285714 17.338007142857144c-0.47241535714285715 0.44654999999999995 -1.2515239285714286 0.1434642857142857 -1.2978364285714286 -0.50505v0c-0.31472999999999995 -4.406136428571428 -0.32800392857142857 -8.824850357142857 -0.06656464285714285 -13.231641428571427C3.2784235714285717 2.1550425 4.4894710714285715 1.0446428571428572 5.938279285714285 1.0446428571428572H13.561832142857144c1.44885 0 2.6597999999999997 1.1103996428571428 2.7456 2.556672857142857 0.2615785714285714 4.406791071428572 0.24820714285714285 8.825505 -0.06643928571428571 13.231641428571427v0Z" strokeWidth="1.5" />
                             </g>
                         </svg>
-                        <input
-                            type="text"
-                            required
-                            name='pBrand'
-                            placeholder="Product Brand"
-                            title="Brand Name"
-                        />
-                    </label>
+
+                            <select name='pBrand' className='p-0 ml-0' defaultValue="" required>
+                                <option disabled value="">Select Brand</option>
+                                {
+                                    brand?.map((data, inD) => (
+                                        <option key={inD}>{data.newBrand}</option>
+                                    ))
+                                }
+                            </select>
+                        </label>
+                        <button onClick={() => setBrandOpen(true)} type='button' className='btn btn-warning'>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="feather feather-plus-circle"><circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="16" /><line x1="8" y1="12" x2="16" y2="12" /></svg>
+                        </button>
+                    </div>
 
                     <label className="input w-full validator">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14" id="Auto-Correction-Check--Streamline-Flex-Gradient" height="24" width="24">
@@ -523,6 +611,39 @@ const AddPro = () => {
                     <input type="submit" value="Upload" className='btn btn-primary' />
                 </div>
             </form>
+
+            <AddCategory open={cateOpen} onClose={() => setCateOpen(false)}>
+                <h2 className="text-xl text-center font-semibold m-4">Add Products Category</h2>
+
+                <form onSubmit={(e) => handleAddCate(e)} className="space-y-3">
+                    <div>
+                        <label className="font-medium">Products Category</label>
+                        <input
+                            type="text"
+                            name="newCate"
+                            required
+                            className="input input-bordered w-full"
+                        />
+                    </div>
+                    <input type="submit" className='btn btn-warning w-full' value="Add" />
+                </form>
+            </AddCategory>
+            <AddCategory open={brandOpen} onClose={() => setBrandOpen(false)}>
+                <h2 className="text-xl text-center font-semibold m-4">Add Products Brand</h2>
+
+                <form onSubmit={(e) => handleAddBrand(e)} className="space-y-3">
+                    <div>
+                        <label className="font-medium">Products Brand</label>
+                        <input
+                            type="text"
+                            name="newBrand"
+                            required
+                            className="input input-bordered w-full"
+                        />
+                    </div>
+                    <input type="submit" className='btn btn-warning w-full' value="Add" />
+                </form>
+            </AddCategory>
         </div>
     );
 };
