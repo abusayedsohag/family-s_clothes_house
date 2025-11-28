@@ -11,10 +11,12 @@ export async function POST(req) {
 
         const body = await req.json();
 
-        const existing = await collection.findOne({
-            newBrand: body.newBrand,
-        });
+        const formattedBrand = body.newBrand.trim();
+        const titleCaseBrand = formattedBrand.charAt(0).toUpperCase() + formattedBrand.slice(1).toLowerCase();
 
+        const existing = await collection.findOne({
+            newBrand: { $regex: `^${formattedBrand}$`, $options: "i" }
+        });
 
         if (existing) {
             return NextResponse.json({
@@ -23,7 +25,9 @@ export async function POST(req) {
             });
         }
 
-        const result = await collection.insertOne(body);
+        const result = await collection.insertOne({
+            newBrand: titleCaseBrand
+        });
 
         return NextResponse.json({
             success: true,

@@ -10,6 +10,8 @@ const EditPro = () => {
     const id = searchParams.get("id");
 
     const [mainPro, setMainPro] = useState([])
+    const [category, setCategory] = useState([]);
+    const [brand, setBrand] = useState([]);
 
     const [images, setImages] = useState(Array(6).fill(""));
     const [loading, setLoading] = useState(null)
@@ -30,6 +32,19 @@ const EditPro = () => {
                 setSelectedSizes(data.product?.sizes || []);
             });
     }, [id]);
+
+    useEffect(() => {
+        fetch("/api/category")
+            .then(res => res.json())
+            .then(data => setCategory(data.category))
+    }, [])
+
+    useEffect(() => {
+        fetch("/api/brand")
+            .then(res => res.json())
+            .then(data => setBrand(data.brand))
+    }, [])
+
 
     const handleImgUpload = async (index, e) => {
         const file = e.target.files[0];
@@ -112,14 +127,11 @@ const EditPro = () => {
         setSelectedSizes(newSizes);
     };
 
-
     const handleDeleteImage = (index) => {
         const updated = [...images];
         updated[index] = "";
         setImages(updated);
     };
-
-
 
     const handleSUbmit = async (e) => {
         e.preventDefault()
@@ -181,7 +193,6 @@ const EditPro = () => {
             });
         }
     }
-
 
 
     return (
@@ -281,25 +292,23 @@ const EditPro = () => {
                     </label>
 
                     <label className="select w-full select-warning">
-
-                        <select name='pCategory' className='p-0 ml-0' defaultValue={mainPro.pCategory} required>
-                            <option disabled value="">Select Category</option>
-                            <option>Two Pices</option>
-                            <option>Three Pices</option>
-                            <option>Kurta</option>
+                        <select name='pCategory' className='p-0 ml-0' required>
+                            {
+                                category?.map((data, indeX) => (
+                                    <option key={indeX} selected={mainPro.pCategory === data.newCate}>{data.newCate}</option>
+                                ))
+                            }
                         </select>
                     </label>
 
-                    <label className="input w-full validator">
-
-                        <input
-                            type="text"
-                            defaultValue={mainPro.pBrand}
-                            required
-                            name='pBrand'
-                            placeholder="Product Brand"
-                            title="Brand Name"
-                        />
+                    <label className="select w-full select-warning">
+                        <select name='pBrand' className='p-0 ml-0' required>
+                            {
+                                brand?.map((data, indeX) => (
+                                    <option key={indeX} selected={mainPro.pBrand === data.newBrand}>{data.newBrand}</option>
+                                ))
+                            }
+                        </select>
                     </label>
 
                     <label className="input w-full validator">

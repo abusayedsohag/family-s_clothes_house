@@ -12,8 +12,11 @@ export async function POST(req) {
 
         const body = await req.json();
 
+        const formattedCate = body.newCate.trim();
+        const titleCaseCate = formattedCate.charAt(0).toUpperCase() + formattedCate.slice(1).toLowerCase();
+
         const existing = await collection.findOne({
-            newCate: body.newCate,
+            newCate: { $regex: `^${formattedCate}$`, $options: "i" }
         });
 
 
@@ -24,7 +27,11 @@ export async function POST(req) {
             });
         }
 
-        const result = await collection.insertOne(body);
+        const result = await collection.insertOne(
+            {
+                newCate: titleCaseCate
+            }
+        );
 
         return NextResponse.json({
             success: true,
