@@ -145,7 +145,7 @@ const Products = () => {
                                                 <div className="avatar">
                                                     <div className="mask mask-squircle h-12 w-12">
                                                         <img
-                                                            src={info.pImage[0]}
+                                                            src={info?.pImage?.[0]}
                                                             alt={info.keyword} />
                                                     </div>
                                                 </div>
