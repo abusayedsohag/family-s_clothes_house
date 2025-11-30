@@ -1,4 +1,5 @@
 
+import Navbar from "@/Component/Navbar";
 import "./globals.css";
 import Script from "next/script";
 
@@ -19,6 +20,7 @@ export default function RootLayout({ children }) {
         />
       </head>
       <body suppressHydrationWarning={true}>
+        <Navbar />
         {children}
       </body>
     </html>

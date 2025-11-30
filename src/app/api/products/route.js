@@ -1,6 +1,5 @@
 export const runtime = "nodejs";
 
-import Products from "@/app/admin/products/page";
 import clientPromise from "@/lib/mongoDB";
 import { ObjectId } from "mongodb";
 import { NextResponse } from "next/server";

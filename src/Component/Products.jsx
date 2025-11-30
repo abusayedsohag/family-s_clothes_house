@@ -79,23 +79,40 @@ const Products = () => {
                     ) : (
 
                         showPro?.map((data, index) => (
-                            <div key={index} className="card bg-base-100 shadow-xl shadow-sky-200">
-                                <figure className="rounded-b-none md:px-5 md:pt-5">
-                                    <img
-                                        src={data?.pImage?.[0]}
-                                        alt={data?.pName}
-                                        className="rounded-xl" />
+                            <a href={`/products/${data._id}`} key={index} className="card border border-amber-300 bg-base-100 shadow-xl shadow-sky-200 transition-transform duration-75 md:duration-400 hover:scale-105 active:scale-105">
+                                <figure className="px-2 pt-2 lg:px-5 lg:pt-5">
+                                    <div className='relative'>
+                                        <img
+                                            src={data?.pImage?.[0]}
+                                            alt={data?.pName}
+                                            className="rounded-xl"
+                                        />
+                                        <div className='absolute top-2 right-0 rounded-l-full bg-blue-700 w-1/3'>
+                                            {
+                                                data.discount !== 0 && (
+                                                    <h1 className='text-white text-center'>-{data.discount}%</h1>
+                                                )
+                                            }
+                                        </div>
+                                    </div>
+
                                 </figure>
-                                <div className="card-body p-5">
-                                    <h2 className="card-title md:text-2xl font-semibold">{data.pName}</h2>
-                                    <p className="text-start">Price: {data.salePrice} ৳</p>
-                                    <div className="card-actions">
-                                        <a>
-                                            <button className="btn btn-primary btn-outline rounded-full">View Details</button>
-                                        </a>
+                                <div className="card-body p-2 lg:p-5">
+                                    <h2 className="card-title text-sm lg:text-lg font-semibold line-clamp-2">{data.pName}</h2>
+                                    <p className="text-start text-lg font-semibold">৳{data.salePrice}
+                                        {
+                                            data.discount !== 0 && (
+                                                <span className='text-sm px-2 line-through text-gray-500'>৳{data.rPrice}</span>
+                                            )
+                                        }
+                                    </p>
+                                    <div className='flex justify-between'>
+                                        <button className='w-1/2 bg-blue-300 rounded-r-full text-xs font-semibold py-2 md:py-3'>Add Card</button>
+                                        <button className='w-1/2 bg-amber-300 rounded-l-full text-xs font-semibold py-2 md:py-3'>Buy</button>
                                     </div>
                                 </div>
-                            </div>
+
+                            </a>
                         ))
 
                     )
