@@ -3,12 +3,19 @@
 // import Swal from 'sweetalert2';
 import Link from 'next/link';
 import Image from 'next/image';
+import { usePathname } from 'next/navigation';
 // import { useAuth } from '@/context/AuthContext';
 // import { useEffect, useRef, useState } from 'react';
 
 const Navbar = () => {
 
     // const { user, logout }
+
+    const pathname = usePathname();
+
+    if (pathname.startsWith('/admin')) {
+        return null;
+    }
 
     const links =
         <>

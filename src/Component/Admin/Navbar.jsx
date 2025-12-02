@@ -1,9 +1,14 @@
-
+'use client'
+import { useAuth } from '@/app/admin/context/AuthContext';
 import Image from 'next/image';
 import React from 'react';
 
 const AdminNav = () => {
 
+    const { user, logout } = useAuth();
+
+    console.log(user);
+    
 
     return (
         <div>
@@ -44,8 +49,14 @@ const AdminNav = () => {
                     </button>
                     <div className="dropdown dropdown-end">
                         <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar">
-                            <div className="w-10 flex justify-center items-center rounded-full">
-                                <i className="fa-solid fa-circle-user fa-2x"></i>
+                            <div className="w-8 flex justify-center items-center rounded-full">
+                                {
+                                    user?.photoURL ? (
+                                        <img src={user.photoURL} alt="I" className='' />
+                                    ) : (
+                                        <i className="fa-solid fa-circle-user fa-2x"></i>
+                                    )
+                                }
                             </div>
                         </div>
                         <ul
@@ -58,7 +69,7 @@ const AdminNav = () => {
                                 </a>
                             </li>
                             <li><a>Settings</a></li>
-                            <li><a>Logout</a></li>
+                            <li onClick={logout}><a>Logout</a></li>
                         </ul>
                     </div>
                 </div>
