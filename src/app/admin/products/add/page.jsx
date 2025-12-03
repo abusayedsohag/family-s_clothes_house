@@ -1,6 +1,6 @@
 "use client"
-import AddCategory from '@/Component/Admin/AddCategory';
-import Spinner from '@/Component/Admin/Spinner';
+import AddCategory from '@/app/admin/Components/AddCategory';
+import Spinner from '@/app/admin/Components/Spinner';
 import React, { useEffect, useState } from 'react';
 import Swal from 'sweetalert2';
 

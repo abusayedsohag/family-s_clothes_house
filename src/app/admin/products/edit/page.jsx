@@ -1,5 +1,5 @@
 "use client"
-import Spinner from '@/Component/Admin/Spinner';
+import Spinner from '@/app/admin/Components/Spinner';
 import { useSearchParams } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import Swal from 'sweetalert2';

@@ -24,7 +24,12 @@ export const AuthProvider = ({ children }) => {
             displayName: name,
             photoURL: image,
         })
+
+        await signOut(auth)
+
         return createUser.user
+
+
     }
 
     const signIn = (email, password) => {
