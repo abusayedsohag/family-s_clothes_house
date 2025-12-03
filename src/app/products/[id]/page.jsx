@@ -10,7 +10,7 @@ const ProductsDetails = () => {
     const [selectImg, setSelectImg] = useState()
 
     useEffect(() => {
-        fetch(`/api/products?id=${id}`)
+        fetch(`/api/products/${id}`)
             .then(res => res.json())
             .then(data => setProductInfo(data.product))
     }, [])

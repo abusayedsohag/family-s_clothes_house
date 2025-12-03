@@ -287,8 +287,6 @@ const AddPro = () => {
         }
     }
 
-
-
     return (
         <div>
             <h1 className='text-2xl font-semibold text-center'>Products Information</h1>

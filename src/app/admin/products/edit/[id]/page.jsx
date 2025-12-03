@@ -1,13 +1,13 @@
 "use client"
 import Spinner from '@/app/admin/Components/Spinner';
-import { useSearchParams } from 'next/navigation';
+import { useParams, useSearchParams } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import Swal from 'sweetalert2';
 
 const EditPro = () => {
 
-    const searchParams = useSearchParams();
-    const id = searchParams.get("id");
+    const params = useParams();
+    const  id  = params.id
 
     const [mainPro, setMainPro] = useState([])
     const [category, setCategory] = useState([]);
@@ -22,7 +22,7 @@ const EditPro = () => {
     const [selectedSizes, setSelectedSizes] = useState([]);
 
     useEffect(() => {
-        fetch(`/api/products?id=${id}`)
+        fetch(`/api/products/${id}`)
             .then((res) => res.json())
             .then((data) => {
                 setMainPro(data.product);
@@ -160,11 +160,11 @@ const EditPro = () => {
         };
 
         try {
-            const respon = await fetch('/api/products',
+            const respon = await fetch(`/api/products/${id}`,
                 {
                     method: "PUT",
                     headers: { "content-type": "application/json" },
-                    body: JSON.stringify({ id, pData }),
+                    body: JSON.stringify({ pData }),
 
                 })
 

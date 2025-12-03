@@ -1,37 +1,32 @@
+import { NextResponse } from "next/server";
+import { v4 as uuidv4 } from "uuid";
 import clientPromise from "@/lib/mongoDB";
-import { randomUUID } from "crypto";
-
 
 export async function POST() {
     try {
         const client = await clientPromise;
         const db = client.db("familys_clothes_house");
-        const collection = db.collection("shopping_card");
+        const collection = db.collection("shopping-carts");
 
-        const guestId = randomUUID()
+        const guestId = "guest_" + uuidv4();
 
-        const body = await req.json();
-
-        const existing = await collection.findOne({
-            image: body.image,
-        });
-
-
-        if (existing) {
-            return NextResponse.json({
-                success: false,
-                message: "Duplicate banner found!",
-            });
+        if (!guestId) {
+            return NextResponse.json(
+                { success: false, message: "Guest ID generate failed!" },
+                { status: 400 }
+            );
         }
 
-        const result = await collection.insertOne(body);
-
-        return NextResponse.json({
-            success: true,
-            insertedId: result.insertedId
+        const result = await collection.insertOne({
+            guestId,
+            items: [],
+            createdAt: new Date(),
+            updatedAt: new Date()
         });
 
-    } catch (err) {
-        return NextResponse.json({ error: err.message }, { status: 500 });
+        return NextResponse.json({ success: true, guestId, data: result });
+    } catch (error) {
+        console.log("ERROR creating guest:", error);
+        return NextResponse.json({ message: "Server error" }, { status: 500 });
     }
 }
