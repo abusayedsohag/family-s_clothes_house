@@ -1,27 +1,13 @@
 "use client"
 import Image from 'next/image';
 import React, { useState } from 'react';
+import { useAuth } from '../context/AuthContext';
 
 const Sidebar = ({ children }) => {
 
-    const [drop, setDrop] = useState(false)
+    const [drop, setDrop] = useState(false);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    const { logout } = useAuth();
 
     return (
         <div className="drawer drawer-open">
@@ -106,12 +92,12 @@ const Sidebar = ({ children }) => {
 
                         <div className="menu w-full">
 
-                            <li>
-                                <button className="is-drawer-close:tooltip is-drawer-close:tooltip-right p-1" data-tip="Log Out">
+                            <a onClick={logout}>
+                                <button className="is-drawer-close:tooltip is-drawer-close:tooltip-right p-1 flex items-center gap-2" data-tip="Log Out">
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" strokeLinejoin="round" strokeLinecap="round" strokeWidth="2" fill="none" stroke="currentColor" className="inline-block size-4 my-1.5"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" /><polyline points="16 17 21 12 16 7" /><line x1="21" y1="12" x2="9" y2="12" /></svg>
                                     <span className="is-drawer-close:hidden">Logout</span>
                                 </button>
-                            </li>
+                            </a>
 
                         </div>
                     </div>

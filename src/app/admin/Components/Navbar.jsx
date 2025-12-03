@@ -5,10 +5,7 @@ import React from 'react';
 
 const AdminNav = () => {
 
-    const { user, logout } = useAuth();
-
-    console.log(user);
-    
+    const { user, logout } = useAuth();    
 
     return (
         <div>
@@ -62,12 +59,7 @@ const AdminNav = () => {
                         <ul
                             tabIndex="-1"
                             className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow">
-                            <li>
-                                <a className="justify-between">
-                                    Profile
-                                    <span className="badge">New</span>
-                                </a>
-                            </li>
+                            <li><a href='/admin/profile'>Profile</a></li>
                             <li><a>Settings</a></li>
                             <li onClick={logout}><a>Logout</a></li>
                         </ul>
