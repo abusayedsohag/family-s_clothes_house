@@ -153,8 +153,8 @@ const ShoppingCard = () => {
 
     return (
         <div className={`w-11/12 mx-auto border rounded-lg my-10 relative`}>
-            <div className='flex justify-between p-4'>
-                <div className='w-3/4 mr-2'>
+            <div className='flex justify-between'>
+                <div className='w-3/4 mr-2 p-4'>
                     <h1 className='text-2xl font-bold'>Shopping Card</h1>
                     <div className='pt-4'>
                         {
@@ -205,7 +205,7 @@ const ShoppingCard = () => {
 
                     </div>
                 </div>
-                <div className='w-1/4'>
+                <div className='w-1/4 bg-sky-200 p-4 rounded-lg'>
                     <h1 className='text-2xl font-semibold'>Checkout</h1>
                     <div className='flex flex-col justify-between pt-4'>
                         <div className=''>
