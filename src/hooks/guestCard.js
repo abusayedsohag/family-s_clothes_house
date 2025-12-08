@@ -1,10 +1,12 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { MainContext } from "@/context/MainContext";
+import { useState, useEffect, useContext } from "react";
 
 export default function useGuestCart() {
 
     const [guestId, setGuestId] = useState(null);
+    const { setReload, reload } = useContext(MainContext)
 
     useEffect(() => {
         const stored = localStorage.getItem("guestId");
@@ -24,14 +26,13 @@ export default function useGuestCart() {
     };
 
     const addToCart = async (product) => {
-
         let gId = guestId;
 
         if (!gId) {
             gId = await createGuestCart();
         }
 
-        await fetch("/api/card/cart", {
+        const res = await fetch("/api/card/cart", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
@@ -41,6 +42,14 @@ export default function useGuestCart() {
                 price: product.salePrice,
             }),
         });
+
+        const data = await res.json()        
+
+        if (data.success) {
+            setReload(!reload)
+        }
+
+        return data
     };
 
     return { addToCart, guestId };

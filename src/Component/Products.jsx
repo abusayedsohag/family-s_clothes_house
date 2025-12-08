@@ -1,6 +1,8 @@
 "use client"
+import { MainContext } from '@/context/MainContext';
 import useGuestCart from '@/hooks/guestCard';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
+import Swal from 'sweetalert2';
 
 const Products = () => {
 
@@ -11,6 +13,7 @@ const Products = () => {
     const [nowCate, setNowCate] = useState();
 
     const { addToCart } = useGuestCart();
+    const { reload, setReload } = useContext(MainContext)
 
 
     useEffect(() => {
@@ -34,8 +37,19 @@ const Products = () => {
         }
     }, [nowCate, allProducts])
 
-    const handleAddCard = (data) => {
-        addToCart(data)
+    const handleAddCard = async (data) => {
+        const res = await addToCart(data)
+
+        console.log(res);
+        if (res.success) {
+            setReload(!reload)
+            Swal.fire({
+                title: "Added in Cart!",
+                icon: "success",
+                draggable: true
+            });
+        }
+
     }
 
 

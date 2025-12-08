@@ -1,8 +1,9 @@
 'use client'
 import useGuestCart from '@/hooks/guestCard';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import Spinner from '../admin/Components/Spinner';
 import Swal from 'sweetalert2';
+import { MainContext } from '@/context/MainContext';
 
 const ShoppingCard = () => {
 
@@ -11,20 +12,21 @@ const ShoppingCard = () => {
     const [products, setProducts] = useState([])
     const [cartitems, setCartItems] = useState([])
     const [subTotal, setSubTotal] = useState([])
-    const [reload, setReload] = useState(true)
+    const [reloa, setReloa] = useState(true)
     const [spinner, setSpinner] = useState(false)
+    const { reload, setReload } = useContext(MainContext)
 
     useEffect(() => {
         fetch(`/api/card/cart/${guestId}`)
             .then(res => res.json())
             .then(data => setItems(data?.cart?.items))
-    }, [guestId, reload])
+    }, [guestId, reloa])
 
     useEffect(() => {
         fetch(`/api/products`)
             .then(res => res.json())
             .then(data => setProducts(data.products))
-    }, [items, reload])
+    }, [items, reloa])
 
     useEffect(() => {
         if (!products?.length || !items?.length) return;
@@ -40,14 +42,14 @@ const ShoppingCard = () => {
         }).filter(Boolean);
 
         setCartItems({ selectedProducts, items });
-    }, [products, items, reload]);
+    }, [products, items, reloa]);
 
 
     useEffect(() => {
         if (!items?.length) return;
         const subtotal = items.reduce((sum, item) => sum + item.qty * item.price, 0).toFixed(2)
         setSubTotal(subtotal)
-    }, [items, reload])
+    }, [items, reloa])
 
     const handleQty = async (productID, direction) => {
         setSpinner(true)
@@ -63,6 +65,7 @@ const ShoppingCard = () => {
             const data = await res.json();
 
             if (data.success) {
+                setReloa(!reloa)
                 setReload(!reload)
             }
 
@@ -86,6 +89,7 @@ const ShoppingCard = () => {
                         const cData = await deleteRes.json();
 
                         if (cData.success) {
+                            setReloa(!reloa)
                             setReload(!reload)
                             Swal.fire({
                                 title: "Removed!",
@@ -134,6 +138,7 @@ const ShoppingCard = () => {
                     const cData = await deleteRes.json();
 
                     if (cData.success) {
+                        setReloa(!reloa)
                         setReload(!reload)
                         Swal.fire({
                             title: "Removed!",
@@ -152,7 +157,7 @@ const ShoppingCard = () => {
     }
 
     return (
-        <div className={`w-11/12 mx-auto border rounded-lg my-10 relative`}>
+        <div className={`w-11/12 mx-auto border border-sky-300 shadow-2xl rounded-lg my-10 relative`}>
             <div className='flex justify-between'>
                 <div className='w-3/4 mr-2 p-4'>
                     <h1 className='text-2xl font-bold'>Shopping Card</h1>

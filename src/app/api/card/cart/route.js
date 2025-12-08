@@ -9,6 +9,9 @@ export async function POST(req) {
 
         const { guestId, productID, qty = 1, price} = await req.json();
 
+        console.log(guestId, productID);
+        
+
         if (!guestId || !productID) {
             return NextResponse.json({ error: "No guest id or No ProductsInfo" }, { status: 400 });
         }
@@ -31,7 +34,7 @@ export async function POST(req) {
             );
         }
 
-        return NextResponse.json({ message: "Added to cart" });
+        return NextResponse.json({success: true, message: "Added to cart" });
     } catch (err) {
         console.error(err);
         return NextResponse.json({ error: "Server error" }, { status: 500 });

@@ -1,7 +1,7 @@
-
 import Navbar from "@/Component/Navbar";
 import "./globals.css";
 import Script from "next/script";
+import { MainProvider } from "@/context/MainContext";
 
 
 export const metadata = {
@@ -20,8 +20,10 @@ export default function RootLayout({ children }) {
         />
       </head>
       <body suppressHydrationWarning={true}>
-        <Navbar />
-        {children}
+        <MainProvider>
+          <Navbar />
+          {children}
+        </MainProvider>
       </body>
     </html>
   );

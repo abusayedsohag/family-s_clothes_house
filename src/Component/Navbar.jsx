@@ -4,19 +4,20 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import useGuestCart from '@/hooks/guestCard';
-// import { useAuth } from '@/context/AuthContext';
-// import { useEffect, useRef, useState } from 'react';
+import { MainContext } from '@/context/MainContext';
 
 const Navbar = () => {
 
     // const { user, logout }
 
-    const pathname = usePathname();
-    const { guestId } = useGuestCart();
+    const { reload } = useContext(MainContext)
 
-    const [items, setItems] = useState([])
+    const pathname = usePathname();
+    const { guestId } = useGuestCart();    
+
+    const [items, setItems] = useState({ totalQty: 0, totalPrice: 0 })
 
     if (pathname.startsWith('/admin')) {
         return null;
@@ -31,9 +32,9 @@ const Navbar = () => {
                 const totalQty = itemsCountInfo?.reduce((sum, item) => sum + item.qty, 0)
                 const totalPrice = itemsCountInfo?.reduce((sum, item) => sum + item.qty * item.price, 0)
 
-                setItems({totalQty, totalPrice})
+                setItems({ totalQty, totalPrice })
             })
-    }, [guestId])
+    }, [guestId, reload])
 
     // const handleSignOut = () => {
     //     logout()
@@ -91,14 +92,18 @@ const Navbar = () => {
                         height={1012}
                         style={{ width: '38px', height: 'auto' }}
                     />
-                    <a className="btn hidden  md:flex btn-ghost text-xl">Family's Clothes House</a>
+                    <a href='/' className="btn hidden  md:flex btn-ghost text-xl">Family's Clothes House</a>
                 </div>
                 <div className="navbar-end">
                     <div className="dropdown dropdown-end">
                         <div tabIndex={0} role="button" className="btn btn-ghost btn-circle">
                             <div className="indicator">
                                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"> <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" /> </svg>
-                                <span className="badge badge-xs indicator-item">{items.totalQty}</span>
+                                {
+                                    items.totalQty > 0 && (
+                                        <span className="badge badge-xs indicator-item">{items.totalQty}</span>
+                                    )
+                                }
                             </div>
                         </div>
                         <div

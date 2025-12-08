@@ -1,19 +1,42 @@
 "use client"
+import { MainContext } from '@/context/MainContext';
+import useGuestCart from '@/hooks/guestCard';
 import { useParams } from 'next/navigation';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
+import Swal from 'sweetalert2';
 
 const ProductsDetails = () => {
 
     const { id } = useParams();
 
     const [productInfo, setProductInfo] = useState([]);
-    const [selectImg, setSelectImg] = useState()
+    const [selectImg, setSelectImg] = useState();
+    const { reload, setReload } = useContext(MainContext)
+
+    const { addToCart } = useGuestCart();
+
 
     useEffect(() => {
         fetch(`/api/products/${id}`)
             .then(res => res.json())
             .then(data => setProductInfo(data.product))
     }, [])
+
+    const handleAddCard = async (data) => {
+        const res = await addToCart(data)
+
+        console.log(res);
+        if (res.success) {
+            setReload(!reload)
+            Swal.fire({
+                title: "Added in Cart!",
+                icon: "success",
+                draggable: true
+            });
+        }
+
+    }
+
 
 
     return (
@@ -50,10 +73,12 @@ const ProductsDetails = () => {
                 <p>{productInfo.pShortDes}</p>
                 <h3 className="font-semibold text-xl">Price : {productInfo.salePrice}TK <span className='text-sm badge badge-dash'>-{productInfo.discount}%</span></h3>
 
-                <div className="flex gap-4 items-center">
-                    <button className="btn bg-purple-600 text-white rounded-full">Add To Card </button>
+                <div className="flex gap-2 items-center">
+                    <button className="btn bg-purple-600 text-white rounded-lg">Buy Now </button>
 
-                    <button className={`border  rounded-full p-3 flex justify-center items-center `}>
+                    <button onClick={() => handleAddCard(productInfo)} className="btn bg-green-500 text-white rounded-lg">Add To Card </button>
+
+                    <button className={`border rounded-full p-3 flex justify-center items-center `}>
                         <i className="fa-regular fa-heart"></i>
                     </button>
                 </div>
