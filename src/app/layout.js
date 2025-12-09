@@ -2,6 +2,7 @@ import Navbar from "@/Component/Navbar";
 import "./globals.css";
 import Script from "next/script";
 import { MainProvider } from "@/context/MainContext";
+import Footer from "@/Component/Footer";
 
 
 export const metadata = {
@@ -23,6 +24,7 @@ export default function RootLayout({ children }) {
         <MainProvider>
           <Navbar />
           {children}
+          <Footer></Footer>
         </MainProvider>
       </body>
     </html>

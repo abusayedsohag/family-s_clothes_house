@@ -57,7 +57,7 @@ const Products = () => {
 
 
     return (
-        <div className='grid md:grid-cols-12 gap-4 w-11/12 mx-auto'>
+        <div className='grid md:grid-cols-12 gap-4 w-11/12 mx-auto py-10'>
             <div className='md:hidden col-span-12 flex gap-1 overflow-scroll'
                 style={{
                     scrollbarWidth: "none",
