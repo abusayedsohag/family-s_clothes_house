@@ -7,15 +7,14 @@ import { usePathname } from 'next/navigation';
 import { useContext, useEffect, useState } from 'react';
 import useGuestCart from '@/hooks/guestCard';
 import { MainContext } from '@/context/MainContext';
+import Swal from 'sweetalert2';
 
 const Navbar = () => {
 
-    // const { user, logout }
-
-    const { reload } = useContext(MainContext)
+    const { reload, user, logout } = useContext(MainContext);
 
     const pathname = usePathname();
-    const { guestId } = useGuestCart();    
+    const { guestId } = useGuestCart();
 
     const [items, setItems] = useState({ totalQty: 0, totalPrice: 0 })
 
@@ -36,21 +35,21 @@ const Navbar = () => {
             })
     }, [guestId, reload])
 
-    // const handleSignOut = () => {
-    //     logout()
-    //         .then(res => {
-    //             Swal.fire({
-    //                 position: "center",
-    //                 icon: "success",
-    //                 title: "Successfully Sign Out",
-    //                 showConfirmButton: false,
-    //                 timer: 1500
-    //             });
-    //         })
-    //         .catch(error => {
-    //             alert('Something Error')
-    //         })
-    // }
+    const handleSignOut = () => {
+        logout()
+            .then(res => {
+                Swal.fire({
+                    position: "center",
+                    icon: "success",
+                    title: "Successfully Sign Out",
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+            })
+            .catch(error => {
+                alert('Something Error')
+            })
+    }
 
     return (
         <div className=''>
@@ -118,25 +117,37 @@ const Navbar = () => {
                             </div>
                         </div>
                     </div>
-                    <div className="dropdown dropdown-end">
-                        <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar">
-                            <div className="w-10 flex justify-center items-center rounded-full">
-                                <i className="fa-solid fa-circle-user fa-2x"></i>
+                    {
+                        user && (
+                            <div className="dropdown dropdown-end">
+                                <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar">
+                                    <div className="w-10 flex justify-center items-center rounded-full">
+                                        {
+                                            user?.photoURL ? (
+                                                <div>
+                                                    <img src={user.photoURL} alt="User Img" />
+                                                </div>
+                                            ) : (
+                                                <i className="fa-solid fa-circle-user fa-2x"></i>
+                                            )
+                                        }
+                                    </div>
+                                </div>
+                                <ul
+                                    tabIndex="-1"
+                                    className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow">
+                                    <li>
+                                        <a className="justify-between">
+                                            Profile
+                                            <span className="badge">New</span>
+                                        </a>
+                                    </li>
+                                    <li><a>Settings</a></li>
+                                    <li><a onClick={handleSignOut}>Logout</a></li>
+                                </ul>
                             </div>
-                        </div>
-                        <ul
-                            tabIndex="-1"
-                            className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow">
-                            <li>
-                                <a className="justify-between">
-                                    Profile
-                                    <span className="badge">New</span>
-                                </a>
-                            </li>
-                            <li><a>Settings</a></li>
-                            <li><a>Logout</a></li>
-                        </ul>
-                    </div>
+                        )
+                    }
                 </div>
             </div>
         </div>

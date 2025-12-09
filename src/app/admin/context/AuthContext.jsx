@@ -8,7 +8,7 @@ import {
     signOut,
     updateProfile
 } from "firebase/auth";
-import { auth } from "../firebase/firebaseConfig";
+import { adminAuth } from "../firebase/firebaseConfig";
 
 const AuthContext = createContext();
 
@@ -18,27 +18,25 @@ export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
 
     const signUp = async ({ image, name, email, password }) => {
-        const createUser = await createUserWithEmailAndPassword(auth, email, password)
+        const createUser = await createUserWithEmailAndPassword(adminAuth, email, password)
 
         await updateProfile(createUser.user, {
             displayName: name,
             photoURL: image,
         })
 
-        await signOut(auth)
+        await signOut(adminAuth)
 
         return createUser.user
-
-
     }
 
     const signIn = (email, password) => {
-        return signInWithEmailAndPassword(auth, email, password)
+        return signInWithEmailAndPassword(adminAuth, email, password)
     }
 
 
     useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+        const unsubscribe = onAuthStateChanged(adminAuth, (currentUser) => {
             setUser(currentUser);
             setLoading(false);
         });
@@ -47,7 +45,7 @@ export const AuthProvider = ({ children }) => {
     }, []);
 
     const logout = async () => {
-        await signOut(auth);
+        await signOut(adminAuth);
     };
 
     return (
