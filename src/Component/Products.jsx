@@ -52,10 +52,6 @@ const Products = () => {
 
     }
 
-
-
-
-
     return (
         <div className='grid md:grid-cols-12 gap-4 w-11/12 mx-auto py-10'>
             <div className='md:hidden col-span-12 flex gap-1 overflow-scroll'
@@ -74,8 +70,8 @@ const Products = () => {
             </div>
             <div className='col-span-2 hidden md:block'>
                 <fieldset className='fieldset border rounded-md'>
-                    <legend className='fieldset-legend text-center text-xl p-2'>Category</legend>
-                    <div className="rounded-2xl p-2 space-y-6 flex flex-row md:flex-col">
+                    <legend className='fieldset-legend text-center text-xl px-2 py-0'>Category</legend>
+                    <div className="rounded-2xl p-2 space-y-2 flex flex-row md:flex-col">
                         <button onClick={() => setNowCate(null)} className={`rounded-full btn w-full`}>All Products</button>
                         {
                             category?.map((data, iDx) => (
