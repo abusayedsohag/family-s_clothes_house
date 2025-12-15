@@ -14,11 +14,11 @@ export async function POST(req) {
         const existingGmail = await collection.findOne({ email })
 
         if (existingNumber) {
-            return NextResponse.json({success: false, message: "Number is existing"})
+            return NextResponse.json({ success: false, message: "Number is existing" })
         }
 
         if (existingGmail) {
-            return NextResponse.json({success: false, message: "Gmail is existing"})
+            return NextResponse.json({ success: false, message: "Gmail is existing" })
         }
         const res = await collection.insertOne(data)
 
@@ -33,3 +33,4 @@ export async function POST(req) {
         );
     }
 }
+
