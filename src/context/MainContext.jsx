@@ -8,6 +8,7 @@ export function MainProvider({ children }) {
 
     const [reload, setReload] = useState(false);
     const [user, setUser] = useState(null);
+    const [userdata, setUserData] = useState(null);
     const [loading, setLoading] = useState(false)
 
 
@@ -46,6 +47,14 @@ export function MainProvider({ children }) {
     };
 
 
+    useEffect(() => {
+        if (!user) return;
+        fetch(`/api/accounts/${user?.email}`)
+            .then(res => res.json())
+            .then(data => setUserData(data.finddata))
+    }, [user, reload])
+
+
     const value = {
         reload,
         setReload,
@@ -53,7 +62,8 @@ export function MainProvider({ children }) {
         user,
         signIn,
         loading,
-        logout
+        logout,
+        userdata
     }
 
     return (

@@ -1,19 +1,39 @@
 "use client"
 import { MainContext } from '@/context/MainContext';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext } from 'react';
+import Swal from 'sweetalert2';
 
 const Profile = () => {
 
-    const { user } = useContext(MainContext);
-    const [userdata, setUserData] = useState([])
+    const { user, userdata, setReload } = useContext(MainContext);
 
-    useEffect(() => {
-        if (!user) return;
-        fetch(`/api/accounts/${user?.email}`)
-            .then(res => res.json())
-            .then(data => setUserData(data.finddata))
-    }, [user])
+    const handleGender = async (e) => {
+        e.preventDefault();
+        setReload(true)
+        const gender = e.target.value;
 
+        try {
+            const res = await fetch(`/api/accounts/${user?.email}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ gender: gender })
+            })
+            const data = await res.json()
+
+            if (data.updatedCount === 0) {
+                Swal.fire({
+                    icon: "error",
+                    title: "Oops...",
+                    text: "Something went wrong!",
+                });
+            }
+
+            setReload(false)
+        } catch (error) {
+            alert("something Error")
+        }
+
+    }
 
     return (
         <div className='w-full space-y-4'>
@@ -21,16 +41,16 @@ const Profile = () => {
                 <h1 className='text-2xl font-semibold mb-2'>Personal Information</h1>
                 <hr />
                 <div className='grid md:grid-cols-2 gap-4 p-2'>
-                    <h1 className=''>Full Name: <br /> <span className='font-semibold'>{user?.displayName}</span></h1>
-                    <h1>Email: <br /> {user?.email}</h1>
-                    <h1>Phone: <br /> +880 {userdata.number}</h1>
+                    <h1 className=''>Full Name: <br /> <span className='font-semibold pl-2'>{user?.displayName}</span></h1>
+                    <h1>Email: <br /> <span className='pl-2'>{user.email}</span></h1>
+                    <h1>Phone: <br /> <span className='pl-2'>+880{userdata.number}</span></h1>
                     <h1>Gender: <br />
                         {
                             userdata.gender ? (
-                                <h1>{userdata}</h1>
+                                <span className='pl-2'>{userdata?.gender}</span>
                             ) : (
-                                <select name="gender" className='select'>
-                                    <option>Select Gender</option>
+                                <select onChange={handleGender} name="gender" className='select'>
+                                    <option disabled selected>Select Gender</option>
                                     <option>Male</option>
                                     <option>Female</option>
                                     <option>Others</option>
@@ -43,29 +63,42 @@ const Profile = () => {
             </div>
             <div className='border-2 border-sky-500 rounded-xl p-2 w-full'>
                 <div className='flex justify-between items-center'>
-                    <h1 className='text-2xl font-semibold mb-2'>My Address</h1>
-                    <div className='flex gap-2'>
-                        <button className='btn btn-sm btn-accent'>Home</button>
-                        <button className='btn btn-sm btn-secondary'>Office</button>
-                        <button className='btn btn-sm btn-primary'>Add Address</button>
-                    </div>
+                    <h1 className='text-2xl font-semibold mb-2'>Order History</h1>
+
                 </div>
                 <hr />
-                <div className='grid md:grid-cols-2 gap-4 p-2'>
-                    <div className='border p-2 rounded-lg'>
-                        <h1>Abu Sayed Sayed</h1>
-                        <h3>+8801761555819</h3>
-                        <h2>Salbon Mistripara, Salbon , Rangpur</h2>
-                        <h2>Label: Home or Office</h2>
-                    </div>
-                    <div className='border p-2 rounded-lg'>
-                        <h1>Abu Sayed Sayed</h1>
-                        <h3>+8801761555819</h3>
-                        <h2>Salbon Mistripara, Salbon , Rangpur</h2>
-                        <h2>Label: Home or Office</h2>
-                    </div>
+                <div className='p-2 table'>
+                    <table>
+                        <thead>
+                            <tr>
+                                <td>Order ID</td>
+                                <td>Order Date</td>
+                                <td>Products</td>
+                                <td>Total Amount</td>
+                                <td>Invoice</td>
+                                <td>Status</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>#15547</td>
+                                <td>10/02/2025</td>
+                                <td>15547</td>
+                                <td>15547</td>
+                                <td>15547</td>
+                                <td>15547</td>
+                            </tr>
+                            <tr>
+                                <td>#15547</td>
+                                <td>10/03/2025</td>
+                                <td>15547</td>
+                                <td>15547</td>
+                                <td>15547</td>
+                                <td>15547</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
-
             </div>
         </div>
     );

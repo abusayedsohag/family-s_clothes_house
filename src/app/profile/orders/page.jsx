@@ -5,14 +5,6 @@ import React, { useContext, useEffect, useState } from 'react';
 const Order = () => {
 
     const { user } = useContext(MainContext);
-    const [userdata, setUserData] = useState([])
-
-    useEffect(() => {
-        if (!user) return;
-        fetch(`/api/accounts/${user?.email}`)
-            .then(res => res.json())
-            .then(data => setUserData(data.finddata))
-    }, [user])
 
     return (
         <div className='border-2 border-sky-500 rounded-xl p-2 w-full'>
@@ -50,7 +42,6 @@ const Order = () => {
                     </tbody>
                 </table>
             </div>
-
         </div>
     );
 };
