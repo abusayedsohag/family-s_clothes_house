@@ -11,9 +11,6 @@ export async function GET(req, { params }) {
 
         const { id } = await params
 
-        console.log(id);
-
-
         if (id) {
             const product = await collection.findOne({ _id: new ObjectId(id) });
             return NextResponse.json({ success: true, product });
