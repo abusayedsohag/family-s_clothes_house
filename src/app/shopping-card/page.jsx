@@ -7,6 +7,7 @@ import { MainContext } from '@/context/MainContext';
 
 const ShoppingCard = () => {
 
+    const { userdata } = useContext(MainContext)
     const { guestId } = useGuestCart();
     const [items, setItems] = useState([]);
     const [products, setProducts] = useState([])
@@ -156,6 +157,36 @@ const ShoppingCard = () => {
         }
     }
 
+    const handlePromoApply = async (e) => {
+        e.preventDefault();
+
+        const promo = e.target.promo.value.trim().toUpperCase();
+
+        if (!promo) {
+            console.log("Promo code is required");
+            return;
+        }
+
+        try {
+            const res = await fetch(`/api/promo/${promo}`, {
+                method: "PUT",
+                headers: { "content-type": "application/json" },
+                body: JSON.stringify({ email: userdata.email })
+            })
+
+            const data = await res.json();
+
+            if (!res.ok || !data.success) {
+                console.log(data.message || "Promo not valid");
+                return;
+            }
+
+            console.log("Promo applied:", data.promo);
+        } catch (error) {
+            console.error("Promo apply error:", error);
+        }
+    }
+
     return (
         <div className={`w-11/12 mx-auto border border-sky-300 shadow-2xl rounded-lg my-10 relative`}>
             <div className='flex justify-between'>
@@ -240,10 +271,12 @@ const ShoppingCard = () => {
                                 <h1>Shipping Fee:</h1>
                                 <h2>70.00</h2>
                             </div>
-                            <div className='flex py-2'>
-                                <input type="text" name='Promo' className='input p-1' placeholder='Voucher or Promo' />
-                                <button className='btn btn-info'>APPLY</button>
-                            </div>
+
+                            <form onSubmit={handlePromoApply} className='flex py-2'>
+                                <input type="text" name='promo' className='input p-1 outline-0' placeholder='Voucher or Promo' required />
+                                <input type="submit" value="APPLY" className='btn btn-info' />
+                            </form>
+
                             <hr />
                             <div className='flex justify-between'>
                                 <h1>Total:</h1>

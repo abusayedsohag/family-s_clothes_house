@@ -24,7 +24,7 @@ const Sidebar = ({ children }) => {
                     <div className="menu w-full grow">
                         <ul>
                             <li>
-                                <div data-tip="Homepage" className='border-b'>
+                                <a href='/admin' data-tip="Homepage" className='border-b'>
                                     <Image
                                         src="/logo.png"
                                         alt='Family Group Logo'
@@ -32,7 +32,7 @@ const Sidebar = ({ children }) => {
                                         height={16}
                                     />
                                     <span className="is-drawer-close:hidden font-semibold">Family's Group</span>
-                                </div>
+                                </a>
                             </li>
 
                             <li>
