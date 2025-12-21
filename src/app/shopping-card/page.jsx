@@ -7,7 +7,7 @@ import { MainContext } from '@/context/MainContext';
 
 const ShoppingCard = () => {
 
-    const { userdata } = useContext(MainContext)
+    const { userdata, reload, setReload } = useContext(MainContext)
     const { guestId } = useGuestCart();
     const [items, setItems] = useState([]);
     const [products, setProducts] = useState([])
@@ -15,7 +15,7 @@ const ShoppingCard = () => {
     const [subTotal, setSubTotal] = useState([])
     const [reloa, setReloa] = useState(true)
     const [spinner, setSpinner] = useState(false)
-    const { reload, setReload } = useContext(MainContext)
+    const [promoCode, setPromoCode] = useState();
 
     useEffect(() => {
         fetch(`/api/card/cart/${guestId}`)
@@ -45,12 +45,17 @@ const ShoppingCard = () => {
         setCartItems({ selectedProducts, items });
     }, [products, items, reloa]);
 
-
     useEffect(() => {
         if (!items?.length) return;
         const subtotal = items.reduce((sum, item) => sum + item.qty * item.price, 0).toFixed(2)
         setSubTotal(subtotal)
     }, [items, reloa])
+
+    useEffect(() => {
+        fetch(`/api/promo/${userdata?.pendingPromos[0]}`)
+            .then(res => res.json())
+            .then(data => setPromoCode(data))
+    }, [guestId, reloa])
 
     const handleQty = async (productID, direction) => {
         setSpinner(true)
@@ -171,7 +176,7 @@ const ShoppingCard = () => {
             const res = await fetch(`/api/promo/${promo}`, {
                 method: "PUT",
                 headers: { "content-type": "application/json" },
-                body: JSON.stringify({ email: userdata.email })
+                body: JSON.stringify({ email: userdata.email, total: subTotal })
             })
 
             const data = await res.json();
@@ -181,9 +186,15 @@ const ShoppingCard = () => {
                 return;
             }
 
+            Swal.fire({
+                title: "Congratulation!",
+                icon: "success",
+                draggable: true
+            });
+
             console.log("Promo applied:", data.promo);
         } catch (error) {
-            console.error("Promo apply error:", error);
+            console.error("Promo apply error:", error.message);
         }
     }
 
@@ -270,6 +281,10 @@ const ShoppingCard = () => {
                             <div className='flex justify-between'>
                                 <h1>Shipping Fee:</h1>
                                 <h2>70.00</h2>
+                            </div>
+                            <div className='flex justify-between'>
+                                <h1>Promo:</h1>
+                                <h2>{userdata?.pendingPromos}</h2>
                             </div>
 
                             <form onSubmit={handlePromoApply} className='flex py-2'>

@@ -69,11 +69,20 @@ export async function PUT(req, { params }) {
         const { id } = await params;
         const promoCode = id?.toUpperCase();
 
-        const { email } = await req.json();
+        const { email, total } = await req.json();
 
         if (!promoCode) {
             return NextResponse.json(
                 { success: false, message: "Promo code missing" },
+                { status: 400 }
+            );
+        }
+
+        const amount = Number(total);
+
+        if (isNaN(amount) || amount <= 0) {
+            return NextResponse.json(
+                { success: false, message: "Order amount invalid" },
                 { status: 400 }
             );
         }
@@ -113,6 +122,23 @@ export async function PUT(req, { params }) {
                     throw new Error("PROMO_EXPIRED");
                 }
             }
+
+            /**
+             * Check Order Item total Amount
+             */
+
+            const minOrder = Number(promo.minOrder || 0);
+            const maxOrder = Number(promo.maxOrder || Infinity);
+            const amount = Number(total);
+
+            if (amount < minOrder) {
+                return NextResponse.json({ success: false, message: `MIN_ORDER_EXCEEDED:${promo.minOrder}` })
+            }
+
+            if (amount > maxOrder) {
+                return NextResponse.json({ success: false, message: `MAX_ORDER_EXCEEDED:${promo.maxOrder}` })
+            }
+
 
             /* =======================
                3️⃣ Check usage limit
@@ -204,6 +230,20 @@ export async function PUT(req, { params }) {
             return NextResponse.json(
                 { success: false, message: "User not found" },
                 { status: 404 }
+            );
+        }
+
+        if (error.message === "MIN_ORDER_NOT_MET") {
+            return NextResponse.json(
+                { success: false, message: `Minimum order amount is ${promo?.minOrder}` },
+                { status: 400 }
+            );
+        }
+
+        if (error.message === "MAX_ORDER_EXCEEDED") {
+            return NextResponse.json(
+                { success: false, message: `Maximum order amount is ${promo?.maxOrder}` },
+                { status: 400 }
             );
         }
 

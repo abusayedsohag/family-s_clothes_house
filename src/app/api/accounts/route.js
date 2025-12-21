@@ -34,3 +34,15 @@ export async function POST(req) {
     }
 }
 
+export async function GET(req) {
+    try {
+        const client = await clientPromise;
+        const db = client.db("familys_clothes_house");
+        const collection = db.collection("accounts-user")
+        const finddata = await collection.find({}).toArray()
+
+        return NextResponse.json({ success: true, finddata })
+    } catch (error) {
+        return NextResponse.json({ success: false, message: "Something Error" })
+    }
+}
